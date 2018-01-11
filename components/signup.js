@@ -1,11 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView,
-  StyleSheet,
-  Button,
-  TextInput,
-  Text,
-  TouchableHighlight
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Button, TextInput, Text } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { firebaseAuth } from '../utils/firebase';
 
@@ -15,30 +9,38 @@ class Login extends React.Component {
     this.state = {
       login: undefined,
       pass: undefined,
+      confirmPass: undefined,
+      username: undefined,
     }
-    this.handleLogin = this.handleLogin.bind(this);
+    this.handleSignup = this.handleSignup.bind(this);
   }
-  async handleLogin() {
+  async handleSignup() {
     try {
-      const { login, pass } = this.state;
-        await firebaseAuth
-            .signInWithEmailAndPassword(login, pass);
-        console.log('Logged In!');
-        Actions.replace('home');
+      const { login, pass, confirmPass, username } = this.state;
+      if (pass !== confirmPass) {
+        throw 'Passwords do not match';
+      }
+      const user = await firebaseAuth
+        .createUserWithEmailAndPassword(login, pass);
+      await user.updateProfile({displayName: username });
+      Actions.replace('home');
     } catch (error) {
         console.log(error.toString())
     }
   }
-  handleSignupPress() {
-    Actions.signup();
-  }
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <Text style={styles.text}>Login</Text>
+        <Text style={styles.text}>Email</Text>
         <TextInput 
           onChangeText={(login) => this.setState({ login })} 
           value={this.state.login} 
+          style={styles.input}
+        />
+        <Text style={styles.text}>Username</Text>
+        <TextInput 
+          onChangeText={(username) => this.setState({ username })} 
+          value={this.state.username} 
           style={styles.input}
         />
         <Text style={styles.text}>Password</Text>
@@ -48,10 +50,14 @@ class Login extends React.Component {
           style={styles.input}
           secureTextEntry
         />
-        <Button title='Login' color="#ff342d" onPress={this.handleLogin} />
-        <TouchableHighlight onPress={this.handleSignupPress}>
-          <Text style={styles.link} >I want to sign up</Text>
-        </TouchableHighlight>
+        <Text style={styles.text}>Confirm Password</Text>
+        <TextInput 
+          onChangeText={(confirmPass) => this.setState({ confirmPass })} 
+          value={this.state.confirmPass} 
+          style={styles.input}
+          secureTextEntry
+        />
+        <Button title='Sign Up' color="#ff342d" onPress={this.handleSignup} />
       </KeyboardAvoidingView>
     );
   }
@@ -73,14 +79,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     height: 40,
     marginBottom: 15,
-  },
-  link: {
-    height: 30,
-    marginTop: 15,
-    color: '#fff',
-    fontSize: 16,
-    textDecorationLine: 'underline',
-    textAlign: 'center',
   }
 });
 

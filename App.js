@@ -4,6 +4,7 @@ import { Router, Scene, Stack, Actions } from 'react-native-router-flux';
 import { firebaseAuth } from './utils/firebase';
 import Login from './components/login';
 import Home from './components/home';
+import Signup from './components/signup';
 
 export default class App extends React.Component {
   checkAuth() {
@@ -18,6 +19,7 @@ export default class App extends React.Component {
           <Stack key='root'>
             <Scene key='home' component={Home} initial on={this.checkAuth} />
             <Scene key='login' component={Login} init title='Login'/>
+            <Scene key='signup' component={Signup} title='Signup'/>
           </Stack>
         </Router>
     );
