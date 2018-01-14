@@ -4,7 +4,8 @@ import { KeyboardAvoidingView,
   Button,
   TextInput,
   Text,
-  TouchableHighlight
+  TouchableHighlight,
+  ActivityIndicator,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { firebaseAuth } from '../utils/firebase';
@@ -15,17 +16,21 @@ class Login extends React.Component {
     this.state = {
       login: undefined,
       pass: undefined,
+      isFetching: false,
     }
     this.handleLogin = this.handleLogin.bind(this);
   }
   async handleLogin() {
     try {
       const { login, pass } = this.state;
-        await firebaseAuth
-            .signInWithEmailAndPassword(login, pass);
-        console.log('Logged In!');
-        Actions.replace('home');
+      const cleanLogin = login && login.toLowerCase().trim();
+      this.setState({isFetching: true});
+      await firebaseAuth
+          .signInWithEmailAndPassword(cleanLogin, pass);
+      console.log('Logged In!');
+      Actions.replace('home');
     } catch (error) {
+      this.setState({isFetching: false});
         console.log(error.toString())
     }
   }
@@ -33,8 +38,10 @@ class Login extends React.Component {
     Actions.signup();
   }
   render() {
+    const { isFetching } = this.state;
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        { isFetching ? <ActivityIndicator size="small" color="#ff342d" /> : null }
         <Text style={styles.text}>Login</Text>
         <TextInput 
           onChangeText={(login) => this.setState({ login })} 
@@ -48,7 +55,7 @@ class Login extends React.Component {
           style={styles.input}
           secureTextEntry
         />
-        <Button title='Login' color="#ff342d" onPress={this.handleLogin} />
+        <Button title='Login' color="#ff342d" onPress={this.handleLogin} disabled={isFetching} />
         <TouchableHighlight onPress={this.handleSignupPress}>
           <Text style={styles.link} >I want to sign up</Text>
         </TouchableHighlight>

@@ -7,8 +7,14 @@ import Home from './components/home';
 import Signup from './components/signup';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    console.ignoredYellowBox = [
+      'Setting a timer',
+    ];
+  }
+
   checkAuth() {
-    console.log(firebaseAuth.currentUser)
     if (!firebaseAuth.currentUser) {
       Actions.replace('login');
     }
