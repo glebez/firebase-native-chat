@@ -20,6 +20,7 @@ class Login extends React.Component {
       isFetching: false,
     }
     this.handleLogin = this.handleLogin.bind(this);
+    this.focusOnPassInput = this.focusOnPassInput.bind(this);
   }
   async handleLogin() {
     try {
@@ -37,25 +38,38 @@ class Login extends React.Component {
   handleSignupPress() {
     Actions.signup();
   }
+
+  focusOnPassInput() {
+    this.refs.passInput.focus();
+  }
+  
   render() {
     const { isFetching } = this.state;
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        { isFetching ? <ActivityIndicator size="small" color="#ff342d" /> : null }
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        { isFetching ? <ActivityIndicator size='small' color='#ff342d' /> : null }
         <Text style={styles.text}>Email</Text>
         <TextInput 
+          autoFocus
+          autoCorrect={false}
+          keyboardType='email-address'
           onChangeText={(email) => this.setState({ email })} 
-          value={this.state.email} 
+          onSubmitEditing={this.focusOnPassInput}
+          returnKeyType='next'
           style={styles.input}
+          value={this.state.email} 
         />
         <Text style={styles.text}>Password</Text>
         <TextInput 
           onChangeText={(pass) => this.setState({ pass })} 
-          value={this.state.pass} 
-          style={styles.input}
+          onSubmitEditing={this.handleLogin}
+          ref='passInput'
+          returnKeyType='send'
           secureTextEntry
+          style={styles.input}
+          value={this.state.pass} 
         />
-        <Button title='Login' color="#ff342d" onPress={this.handleLogin} disabled={isFetching} />
+        <Button title='Log in' color='#ff342d' onPress={this.handleLogin} disabled={isFetching} />
         <TouchableHighlight onPress={this.handleSignupPress}>
           <Text style={styles.link} >I want to sign up</Text>
         </TouchableHighlight>
