@@ -9,12 +9,13 @@ import { KeyboardAvoidingView,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { firebaseAuth } from '../utils/firebase';
+import { normaliseEmail } from '../utils/auth';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      login: undefined,
+      email: undefined,
       pass: undefined,
       isFetching: false,
     }
@@ -22,11 +23,10 @@ class Login extends React.Component {
   }
   async handleLogin() {
     try {
-      const { login, pass } = this.state;
-      const cleanLogin = login && login.toLowerCase().trim();
+      const { email, pass } = this.state;
       this.setState({isFetching: true});
       await firebaseAuth
-          .signInWithEmailAndPassword(cleanLogin, pass);
+          .signInWithEmailAndPassword(normaliseEmail(email), pass);
       console.log('Logged In!');
       Actions.replace('home');
     } catch (error) {
@@ -42,10 +42,10 @@ class Login extends React.Component {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
         { isFetching ? <ActivityIndicator size="small" color="#ff342d" /> : null }
-        <Text style={styles.text}>Login</Text>
+        <Text style={styles.text}>Email</Text>
         <TextInput 
-          onChangeText={(login) => this.setState({ login })} 
-          value={this.state.login} 
+          onChangeText={(email) => this.setState({ email })} 
+          value={this.state.email} 
           style={styles.input}
         />
         <Text style={styles.text}>Password</Text>
