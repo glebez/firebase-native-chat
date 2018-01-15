@@ -3,8 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Router, Scene, Stack, Actions } from 'react-native-router-flux';
 import { firebaseAuth } from './utils/firebase';
 import Login from './components/login';
-import Home from './components/home';
 import Signup from './components/signup';
+import Chat from './components/chat';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ export default class App extends React.Component {
     return (
         <Router screenStyle={styles.container}>
           <Stack key='root'>
-            <Scene key='home' component={Home} initial on={this.checkAuth} />
+            <Scene key='home' component={Chat} initial on={this.checkAuth} />
             <Scene key='login' component={Login} init title='Login'/>
             <Scene key='signup' component={Signup} title='Signup'/>
           </Stack>

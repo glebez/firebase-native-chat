@@ -15,3 +15,4 @@ if (!firebase.apps.length) {
 }
 
 export const firebaseAuth = firebase.auth();
+export const firebaseDB = firebase.database();
