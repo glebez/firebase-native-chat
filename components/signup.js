@@ -11,6 +11,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { firebaseAuth } from '../utils/firebase';
 import { normaliseEmail } from '../utils/auth';
+import { colors } from '../utils/styleConsts';
 
 class Signup extends React.Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class Signup extends React.Component {
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container} keyboardVerticalOffset={60}>
         <ScrollView contentContainerStyle={styles.innerWrap} >
-          { isFetching ? <ActivityIndicator size="small" color="#ff342d" /> : null }
+          { isFetching ? <ActivityIndicator size="small" color={colors.baseRed} /> : null }
           <Text style={styles.text}>Email</Text>
           <TextInput 
             onChangeText={(email) => this.setState({ email })} 
@@ -72,7 +73,7 @@ class Signup extends React.Component {
             style={styles.input}
             secureTextEntry
           />
-          <Button title='Sign Up' color="#ff342d" onPress={this.handleSignup} disabled={isFetching} />
+          <Button title='Sign Up' color={colors.baseRed} onPress={this.handleSignup} disabled={isFetching} />
         </ScrollView>
       </KeyboardAvoidingView>
     );
@@ -87,15 +88,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     padding: 25,
-    backgroundColor: '#ff9d2d',
+    backgroundColor: colors.baseOrange,
   },
   text: {
-    color: '#fff',
+    color: colors.baseWhite,
     fontSize: 16,
   },
   input: {
     fontSize: 16,
-    color: '#fff',
+    color: colors.baseWhite,
     height: 40,
     marginBottom: 15,
   }

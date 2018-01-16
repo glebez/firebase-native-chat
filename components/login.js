@@ -10,6 +10,7 @@ import { KeyboardAvoidingView,
 import { Actions } from 'react-native-router-flux';
 import { firebaseAuth } from '../utils/firebase';
 import { normaliseEmail } from '../utils/auth';
+import { colors } from '../utils/styleConsts';
 
 class Login extends React.Component {
   constructor(props) {
@@ -47,7 +48,7 @@ class Login extends React.Component {
     const { isFetching } = this.state;
     return (
       <KeyboardAvoidingView behavior='padding' style={styles.container}>
-        { isFetching ? <ActivityIndicator size='small' color='#ff342d' /> : null }
+        { isFetching ? <ActivityIndicator size='small' color={colors.baseRed} /> : null }
         <Text style={styles.text}>Email</Text>
         <TextInput 
           autoFocus
@@ -69,7 +70,7 @@ class Login extends React.Component {
           style={styles.input}
           value={this.state.pass} 
         />
-        <Button title='Log in' color='#ff342d' onPress={this.handleLogin} disabled={isFetching} />
+        <Button title='Log in' color={colors.baseRed} onPress={this.handleLogin} disabled={isFetching} />
         <TouchableHighlight onPress={this.handleSignupPress}>
           <Text style={styles.link} >I want to sign up</Text>
         </TouchableHighlight>
@@ -83,22 +84,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 25,
-    backgroundColor: '#ff9d2d',
+    backgroundColor: colors.baseOrange,
   },
   text: {
-    color: '#fff',
+    color: colors.baseWhite,
     fontSize: 16,
   },
   input: {
     fontSize: 16,
-    color: '#fff',
+    color: colors.baseWhite,
     height: 40,
     marginBottom: 15,
   },
   link: {
     height: 30,
     marginTop: 15,
-    color: '#fff',
+    color: colors.baseWhite,
     fontSize: 16,
     textDecorationLine: 'underline',
     textAlign: 'center',
