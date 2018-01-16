@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { firebaseDB, firebaseAuth } from '../utils/firebase';
+import { colors } from '../utils/styleConsts';
 
 class Chat extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class Chat extends React.Component {
       messages: undefined,
     };
     this.sendMessage = this.sendMessage.bind(this);
+    this.handleMessagesContentSizeChange = this.handleMessagesContentSizeChange.bind(this);
     this.wrapper = KeyboardAvoidingView;
     this.wrapperProps = {
         behavior: 'padding',
@@ -39,7 +41,14 @@ class Chat extends React.Component {
     if (!messages) {
       return <Text>There are no messages yet</Text>;
     }
-    return Object.keys(messages).sort().map((item, i) => <Text key={item + i}>{messages[item].user}: {messages[item].message}</Text>);
+    return Object.keys(messages).sort().map((item, i) => (
+      <Text key={item + i} style={styles.message}>
+        <Text style={{ fontWeight: 'bold' }} >
+          {messages[item].user}:&nbsp;
+        </Text>
+        {messages[item].message}
+      </Text>
+    ));
   }
 
   sendMessage() {
@@ -47,24 +56,34 @@ class Chat extends React.Component {
       user: firebaseAuth.currentUser.displayName,
       message: this.state.newMessage,
     });
+    this.setState({newMessage: ''});
+  }
+
+  handleMessagesContentSizeChange() {
+    this.refs.messagesView.scrollToEnd()
   }
 
   render() {
     const Wrapper = this.wrapper;
     return (
       <Wrapper {...this.wrapperProps} >
-        <ScrollView contentContainerStyle={styles.messages}>
+        <ScrollView
+          contentContainerStyle={styles.messages}
+          onContentSizeChange={this.handleMessagesContentSizeChange}
+          ref='messagesView'
+        >
           {this.renderMessages()}
         </ScrollView>
         <View style={styles.inputWrap}>
           <TextInput
-            value={this.state.newMessage}
+            autoFocus
             onChangeText={newMessage => this.setState({newMessage})}
             onSubmitEditing={this.sendMessage}
             style={styles.input}
+            value={this.state.newMessage}
           />
           <TouchableHighlight style={styles.sendBtn} onPress={this.sendMessage}>
-            <Text>Send</Text>
+            <Text style={styles.btnText}>SEND</Text>
           </TouchableHighlight>
         </View>
       </Wrapper>
@@ -75,25 +94,37 @@ class Chat extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.superLightOrange,
   },
   messages: {
     flexGrow: 1,
     justifyContent: 'flex-end',
-    paddingBottom: 25,
+    paddingBottom: 5,
+    backgroundColor: colors.superLightOrange,
   },
   inputWrap: {
     flexDirection: 'row',
     height: 40,
     width: '100%',
-    borderTopWidth: 1,
+    backgroundColor: colors.baseWhite,
   },
   input: {
     flex: 1,
     height: 40,
   },
   sendBtn: {
-    backgroundColor: 'tomato',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.baseRed,
     width: 50,
   },
+  btnText: {
+    color: colors.baseWhite,
+    fontWeight: 'bold',
+  },
+  message: {
+    fontSize: 16,
+  }
 });
 export default Chat;
