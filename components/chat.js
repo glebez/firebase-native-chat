@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
   KeyboardAvoidingView,
 } from 'react-native';
+import randomColor from 'randomcolor';
 import { firebaseDB, firebaseAuth } from '../utils/firebase';
 import { colors } from '../utils/styleConsts';
 
@@ -16,9 +17,11 @@ class Chat extends React.Component {
     super(props);
     this.state = {
       messages: undefined,
+      userColors: {},
     };
     this.sendMessage = this.sendMessage.bind(this);
     this.handleMessagesContentSizeChange = this.handleMessagesContentSizeChange.bind(this);
+    this.handleDBDataChange = this.handleDBDataChange.bind(this);
     this.wrapper = KeyboardAvoidingView;
     this.wrapperProps = {
         behavior: 'padding',
@@ -29,21 +32,32 @@ class Chat extends React.Component {
 
   componentWillMount() {
     this.dbMessages = firebaseDB.ref('messages');
-    this.dbMessages.on('value', snapshot => this.setState({messages: snapshot.val()}));
+    this.dbMessages.on('value', this.handleDBDataChange);
   }
 
   componentWillUnmount() {
     this.dbMessages.off();
   }
+  
+  handleDBDataChange(snapshot) {
+    const messages = snapshot.val();
+    // TODO: move user colors to backend to speed things up and persist colors on reload
+    const users = Object.keys(messages).reduce((result, cur) => result.indexOf(messages[cur].user) < 0 ? [...result, messages[cur].user] : result, []);
+    const userColors = users.reduce((result, cur) => {
+      const color = this.state.userColors[cur] || randomColor({luminosity: 'dark'});
+      return { ...result, [cur]: color };
+    }, {});
+    this.setState({ messages, userColors });
+  }
 
   renderMessages() {
-    const { messages } = this.state;
+    const { messages, userColors } = this.state;
     if (!messages) {
       return <Text>There are no messages yet</Text>;
     }
     return Object.keys(messages).sort().map((item, i) => (
       <Text key={item + i} style={styles.message}>
-        <Text style={{ fontWeight: 'bold' }} >
+        <Text style={{ fontWeight: 'bold', color: userColors[messages[item].user] }} >
           {messages[item].user}:&nbsp;
         </Text>
         {messages[item].message}
